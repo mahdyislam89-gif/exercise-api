@@ -3,14 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 import joblib
+import os
 
-# إنشاء التطبيق
+# =========================
+# APP INIT
+# =========================
 app = FastAPI()
 
 # =========================
-# PUBLIC CORS
+# CORS
 # =========================
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,11 +21,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# تحميل الموديل
+# =========================
+# LOAD MODEL
+# =========================
 model = joblib.load("exercise_pipeline.pkl")
 
 
-# شكل البيانات القادمة
+# =========================
+# INPUT SCHEMA
+# =========================
 class ExerciseData(BaseModel):
     Sex: str
     Age: int
@@ -38,15 +44,17 @@ class ExerciseData(BaseModel):
     Equipment: str
 
 
-# Home Route
+# =========================
+# HOME
+# =========================
 @app.get("/")
 def home():
-    return {
-        "message": "Exercise Recommendation API Running Successfully"
-    }
+    return {"message": "Exercise Recommendation API Running 🚀"}
 
 
-# Predict Route
+# =========================
+# PREDICT
+# =========================
 @app.post("/predict")
 def predict(data: ExerciseData):
 
@@ -69,3 +77,15 @@ def predict(data: ExerciseData):
     return {
         "recommended_exercise": str(prediction[0])
     }
+
+
+# =========================
+# RUN SERVER (HUGGING FACE SUPPORT)
+# =========================
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 7860))
+    )
