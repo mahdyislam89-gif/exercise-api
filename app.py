@@ -77,15 +77,3 @@ def predict(data: ExerciseData):
     return {
         "recommended_exercise": str(prediction[0])
     }
-
-
-# =========================
-# RUN SERVER (HUGGING FACE SUPPORT)
-# =========================
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=int(os.environ.get("PORT", 7860))
-    )
